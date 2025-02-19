@@ -1,2 +1,4 @@
 ---
 # vars file for stirlingpdf
+stirlingpdf_path: /opt/stirlingpdf
+stirlingpdf_build_path: /root/stirling-pdf

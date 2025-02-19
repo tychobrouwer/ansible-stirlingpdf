@@ -17,7 +17,7 @@ Example Playbook
 
       roles:
          - { role: tychobrouwer.stirlingpdf }
-         - { role: tychobrouwer.stirlingpdf }
+         - { role: tychobrouwer.stirlingpdf, stirlingpdf_path: /opt/stirlingpdf, stirlingpdf_build_path: /root/stirlingpdf }
 ```
 
 License

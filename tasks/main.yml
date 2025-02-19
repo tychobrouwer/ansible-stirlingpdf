@@ -1,7 +1,111 @@
 ---
-# tasks file for wiki js
+# tasks file for stirlingpdf
 - name: Install packages
   ansible.builtin.package:
     name:
-      - nodejs
+      - automake
+      - autoconf
+      - libtool
+      - libleptonica-dev
+      - pkg-config
+      - zlib1g-dev
+      - make
+      - g++
+      - openjdk-21-jdk
+      - python3
+      - python3-pip
     state: present
+
+- name: Clone jbig2enc
+  ansible.builtin.git:
+    repo: https://github.com/agl/jbig2enc.git
+    dest: /opt/jbig2enc
+    update: true
+    clone: true
+
+- name: Autogen and configure jbig2enc
+  ansible.builtin.shell:
+    cmd: |
+      ./autogen.sh
+      ./configure
+  args:
+    chdir: /opt/jbig2enc
+
+- name: Install jbig2enc
+  community.general.make:
+    chdir: /opt/jbig2enc
+    target: install
+
+- name: Install additional packages
+  ansible.builtin.package:
+    name:
+      - libreoffice-writer
+      - libreoffice-calc
+      - libreoffice-impress
+      - tesseract
+
+- name: Install additional pip packages
+  ansible.builtin.pip:
+    name:   
+      - uno
+      - opencv-python-headless
+      - unoconv
+      - pngquant
+      - WeasyPrint
+    break_system_packages: true
+
+- name: Clone Stirling PDF
+  ansible.builtin.git:
+    repo: https://github.com/Stirling-Tools/Stirling-PDF.git
+    dest: /root/stirling-pdf
+    update: true
+    clone: true
+
+- name: Set chmod gradlew
+  ansible.builtin.file:
+    path: /root/stirling-pdf/gradlew
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Build Stirling PDF
+  ansible.builtin.shell:
+    cmd: ./gradlew build
+  args:
+    chdir: /root/stirling-pdf
+  changed_when: false
+
+- name: Stirling PDF jar name
+  ansible.builtin.command: ls /root/stirling-pdf/build/libs/stirling-pdf-*.jar
+  register: stirling_pdf_jar
+
+- name: Move Stirling PDF jar
+  ansible.builtin.file:
+    src: "{{ stirling_pdf_jar.stdout }}"
+    dest: /opt/stirling-pdf/stirling-pdf.jar
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Move Stirling PDF scripts
+  ansible.builtin.copy:
+    src: /root/stirling-pdf/scripts
+    dest: /opt/stirling-pdf
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Ensure Stirling PDF service file is on remote
+  ansible.builtin.template:
+    src: stirlingpdf.service.j2
+    dest: /etc/systemd/system/stirlingpdf.service
+    mode: "0664"
+    owner: root
+    group: root
+  notify: Restart Wiki.js
+
+- name: Ensure Stirling PDF service is started and enabled
+  ansible.builtin.service:
+    name: stirlingpdf
+    state: started
+    enabled: true
