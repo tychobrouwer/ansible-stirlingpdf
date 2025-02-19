@@ -108,13 +108,13 @@
   changed_when: false
 
 - name: Stirling PDF jar name
-  ansible.builtin.command: ls {{ stirlingpdf_build_path }}/build/libs/stirling-pdf-*.jar
+  ansible.builtin.command: ls {{ stirlingpdf_build_path }}/build/libs/Stirling-PDF-*.jar
   register: stirling_pdf_jar
 
 - name: Move Stirling PDF jar
   ansible.builtin.file:
     src: "{{ stirling_pdf_jar.stdout }}"
-    dest: "{{ stirlingpdf_path }} /stirling-pdf.jar"
+    dest: "{{ stirlingpdf_path }} /Stirling-PDF.jar"
     owner: root
     group: root
     mode: "0755"
