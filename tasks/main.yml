@@ -114,7 +114,15 @@
   ansible.builtin.shell: ls {{ stirlingpdf_build_path }}/build/libs/Stirling-PDF-*.jar
   register: stirling_pdf_jar
 
-- name: Move Stirling PDF jar
+- name: Ensure Stirling PDF directory exists
+  ansible.builtin.file:
+    path: "{{ stirlingpdf_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy Stirling PDF jar
   ansible.builtin.copy:
     src: "{{ stirling_pdf_jar.stdout }}"
     dest: "{{ stirlingpdf_path }} /Stirling-PDF.jar"
@@ -123,7 +131,7 @@
     group: root
     mode: "0755"
 
-- name: Move Stirling PDF scripts
+- name: Copy Stirling PDF scripts
   ansible.builtin.copy:
     src: "{{ stirlingpdf_build_path }}/scripts"
     dest: "{{ stirlingpdf_path }}"
