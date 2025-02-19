@@ -148,7 +148,7 @@
     mode: "0664"
     owner: root
     group: root
-  notify: Restart Wiki.js
+  notify: Restart Stirling
 
 - name: Ensure Stirling PDF service is started and enabled
   ansible.builtin.service:
