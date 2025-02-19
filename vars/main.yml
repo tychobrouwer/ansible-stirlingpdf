@@ -1,4 +1,8 @@
 ---
 # vars file for stirlingpdf
 stirlingpdf_path: /opt/stirlingpdf
-stirlingpdf_build_path: /root/stirling-pdf
+stirlingpdf_build_path: /root/stirlingpdf
+
+stirlingpdf_java_deb_key: https://apt.corretto.aws/corretto.key
+stirlingpdf_java_deb_repo: deb https://apt.corretto.aws stable main
+stirlingpdf_java_package: java-21-amazon-corretto-jdk

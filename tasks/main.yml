@@ -11,9 +11,37 @@
       - zlib1g-dev
       - make
       - g++
-      - openjdk-21-jdk
       - python3
       - python3-pip
+    state: present
+
+- name: Ensure corretto key is on remote
+  ansible.builtin.apt_key:
+    url: "{{ stirlingpdf_java_deb_key }}"
+    keyring: /usr/share/keyrings/corretto-keyring.gpg
+    state: present
+
+- name: Ensure corretto repo is on remote
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/java.list
+    content: "{{ stirlingpdf_java_deb_repo }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Update cache if needed
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
+
+- name: Install Java packages
+  ansible.builtin.package:
+    name:
+      - "{{ stirlingpdf_java_package }}"
+      - libxi6
+      - libxtst6
+      - libxrender1
     state: present
 
 - name: Clone jbig2enc
