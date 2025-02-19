@@ -71,7 +71,7 @@
       - libreoffice-writer
       - libreoffice-calc
       - libreoffice-impress
-      - tesseract
+      - tesseract-ocr
 
 - name: Install additional pip packages
   ansible.builtin.pip:
