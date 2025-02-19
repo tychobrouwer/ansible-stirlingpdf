@@ -111,7 +111,7 @@
   changed_when: false
 
 - name: Stirling PDF jar name
-  ansible.builtin.command: ls {{ stirlingpdf_build_path }}/build/libs/Stirling-PDF-*.jar
+  ansible.builtin.shell: ls {{ stirlingpdf_build_path }}/build/libs/Stirling-PDF-*.jar
   register: stirling_pdf_jar
 
 - name: Move Stirling PDF jar
