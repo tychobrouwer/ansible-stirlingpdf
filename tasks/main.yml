@@ -11,6 +11,7 @@
       - zlib1g-dev
       - make
       - g++
+      - git
       - python3
       - python3-pip
     state: present
