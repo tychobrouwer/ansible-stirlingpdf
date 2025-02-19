@@ -12,7 +12,7 @@ Type=simple
 
 EnvironmentFile={{ stirlingpdf_path }}/.env
 WorkingDirectory={{ stirlingpdf_path }}
-ExecStart=/usr/bin/java -jar Stirling-PDF-0.17.2.jar
+ExecStart=/usr/bin/java -jar Stirling-PDF.jar
 ExecStop=/bin/kill -15 $MAINPID
 
 [Install]
