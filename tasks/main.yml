@@ -59,11 +59,13 @@
       ./configure
   args:
     chdir: "{{ stirlingpdf_jbig2enc_path }}"
+  changed_when: false
 
 - name: Install jbig2enc
   community.general.make:
     chdir: "{{ stirlingpdf_jbig2enc_path }}"
     target: install
+  changed_when: false
 
 - name: Install additional packages
   ansible.builtin.package:
@@ -92,6 +94,7 @@
     dest: "{{ stirlingpdf_build_path }}"
     update: true
     clone: true
+    force: true
 
 - name: Set chmod gradlew
   ansible.builtin.file:
