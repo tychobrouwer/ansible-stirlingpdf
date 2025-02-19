@@ -141,6 +141,14 @@
     group: root
     mode: "0755"
 
+- name: Create Stirling PDF .env file
+  ansible.builtin.template:
+    src: .env.j2
+    dest: "{{ stirlingpdf_path }}/.env"
+    mode: "0644"
+    owner: root
+    group: root
+
 - name: Ensure Stirling PDF service file is on remote
   ansible.builtin.template:
     src: stirlingpdf.service.j2
