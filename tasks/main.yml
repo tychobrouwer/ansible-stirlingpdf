@@ -48,7 +48,7 @@
 - name: Clone jbig2enc
   ansible.builtin.git:
     repo: https://github.com/agl/jbig2enc.git
-    dest: /opt/jbig2enc
+    dest: "{{ stirlingpdf_jbig2enc_path }}"
     update: true
     clone: true
 
@@ -58,11 +58,11 @@
       ./autogen.sh
       ./configure
   args:
-    chdir: /opt/jbig2enc
+    chdir: "{{ stirlingpdf_jbig2enc_path }}"
 
 - name: Install jbig2enc
   community.general.make:
-    chdir: /opt/jbig2enc
+    chdir: "{{ stirlingpdf_jbig2enc_path }}"
     target: install
 
 - name: Install additional packages
@@ -86,13 +86,13 @@
 - name: Clone Stirling PDF
   ansible.builtin.git:
     repo: https://github.com/Stirling-Tools/Stirling-PDF.git
-    dest: /root/stirling-pdf
+    dest: "{{ stirlingpdf_build_path }}"
     update: true
     clone: true
 
 - name: Set chmod gradlew
   ansible.builtin.file:
-    path: /root/stirling-pdf/gradlew
+    path: "{{ stirlingpdf_build_path }}/gradlew"
     mode: "0755"
     owner: root
     group: root
@@ -101,25 +101,25 @@
   ansible.builtin.shell:
     cmd: ./gradlew build
   args:
-    chdir: /root/stirling-pdf
+    chdir: "{{ stirlingpdf_build_path }}"
   changed_when: false
 
 - name: Stirling PDF jar name
-  ansible.builtin.command: ls /root/stirling-pdf/build/libs/stirling-pdf-*.jar
+  ansible.builtin.command: ls {{ stirlingpdf_build_path }}/build/libs/stirling-pdf-*.jar
   register: stirling_pdf_jar
 
 - name: Move Stirling PDF jar
   ansible.builtin.file:
     src: "{{ stirling_pdf_jar.stdout }}"
-    dest: /opt/stirling-pdf/stirling-pdf.jar
+    dest: "{{ stirlingpdf_path }} /stirling-pdf.jar"
     owner: root
     group: root
     mode: "0755"
 
 - name: Move Stirling PDF scripts
   ansible.builtin.copy:
-    src: /root/stirling-pdf/scripts
-    dest: /opt/stirling-pdf
+    src: "{{ stirlingpdf_build_path }}/scripts"
+    dest: "{{ stirlingpdf_path }}"
     owner: root
     group: root
     mode: "0755"

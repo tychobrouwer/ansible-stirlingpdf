@@ -2,6 +2,7 @@
 # vars file for stirlingpdf
 stirlingpdf_path: /opt/stirlingpdf
 stirlingpdf_build_path: /root/stirlingpdf
+stirlingpdf_jbig2enc_path: /opt/jbig2enc
 
 stirlingpdf_java_deb_key: https://apt.corretto.aws/corretto.key
 stirlingpdf_java_deb_repo: deb https://apt.corretto.aws stable main
