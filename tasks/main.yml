@@ -115,9 +115,10 @@
   register: stirling_pdf_jar
 
 - name: Move Stirling PDF jar
-  ansible.builtin.file:
+  ansible.builtin.copy:
     src: "{{ stirling_pdf_jar.stdout }}"
     dest: "{{ stirlingpdf_path }} /Stirling-PDF.jar"
+    remote_src: true
     owner: root
     group: root
     mode: "0755"
@@ -126,6 +127,7 @@
   ansible.builtin.copy:
     src: "{{ stirlingpdf_build_path }}/scripts"
     dest: "{{ stirlingpdf_path }}"
+    remote_src: true
     owner: root
     group: root
     mode: "0755"
