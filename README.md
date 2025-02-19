@@ -6,8 +6,6 @@ The role installs and configures Stirling PDF
 Role Variables
 --------------
 
-
-
 Example Playbook
 ----------------
 
