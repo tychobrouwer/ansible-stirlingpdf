@@ -81,7 +81,6 @@
       - unoconv
       - pngquant
       - WeasyPrint
-    break_system_packages: true
 
 - name: Clone Stirling PDF
   ansible.builtin.git:
