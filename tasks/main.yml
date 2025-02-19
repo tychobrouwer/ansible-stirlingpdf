@@ -73,6 +73,10 @@
       - libreoffice-impress
       - tesseract-ocr
 
+- name: Set pip configuration
+  ansible.builtin.command: pip3 config set global.break-system-packages True
+  changed_when: false
+
 - name: Install additional pip packages
   ansible.builtin.pip:
     name:   
