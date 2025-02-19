@@ -28,7 +28,7 @@
     content: "{{ stirlingpdf_java_deb_repo }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Update cache if needed
   ansible.builtin.apt:
@@ -81,7 +81,7 @@
 
 - name: Install additional pip packages
   ansible.builtin.pip:
-    name:   
+    name:
       - uno
       - opencv-python-headless
       - unoconv
@@ -113,6 +113,7 @@
 - name: Stirling PDF jar name
   ansible.builtin.shell: ls {{ stirlingpdf_build_path }}/build/libs/Stirling-PDF-*.jar
   register: stirling_pdf_jar
+  changed_when: false
 
 - name: Ensure Stirling PDF directory exists
   ansible.builtin.file:
@@ -125,7 +126,7 @@
 - name: Copy Stirling PDF jar
   ansible.builtin.copy:
     src: "{{ stirling_pdf_jar.stdout }}"
-    dest: "{{ stirlingpdf_path }} /Stirling-PDF.jar"
+    dest: "{{ stirlingpdf_path }}/Stirling-PDF.jar"
     remote_src: true
     owner: root
     group: root
