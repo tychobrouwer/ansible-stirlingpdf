@@ -1,6 +1,6 @@
 ---
 # tasks file for stirlingpdf
-- name: Install packages
+- name: Install required packages
   ansible.builtin.package:
     name:
       - automake
@@ -16,13 +16,13 @@
       - python3-pip
     state: present
 
-- name: Ensure corretto key is on remote
+- name: Ensure Java key is on remote
   ansible.builtin.apt_key:
     url: "{{ stirlingpdf_java_deb_key }}"
     keyring: /usr/share/keyrings/corretto-keyring.gpg
     state: present
 
-- name: Ensure corretto repo is on remote
+- name: Ensure Java repo is on remote
   ansible.builtin.copy:
     dest: /etc/apt/sources.list.d/java.list
     content: "{{ stirlingpdf_java_deb_repo }}"
@@ -30,7 +30,7 @@
     group: root
     mode: "0644"
 
-- name: Update cache if needed
+- name: Update APT cache if needed
   ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 3600
@@ -45,18 +45,20 @@
       - libxrender1
     state: present
 
-- name: Clone jbig2enc
+- name: Clone jbig2enc git repo
   ansible.builtin.git:
     repo: https://github.com/agl/jbig2enc.git
     dest: "{{ stirlingpdf_jbig2enc_path }}"
-    update: true
     clone: true
+    depth: 1
+    force: true
+    version: latest-release
+  notify: Restart Stirling
 
 - name: Autogen and configure jbig2enc
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: |
-      ./autogen.sh
-      ./configure
+      ./autogen.sh && ./configure
   args:
     chdir: "{{ stirlingpdf_jbig2enc_path }}"
   changed_when: false
@@ -65,19 +67,15 @@
   community.general.make:
     chdir: "{{ stirlingpdf_jbig2enc_path }}"
     target: install
-  changed_when: false
 
-- name: Install additional packages
+- name: Install additional LibreOffice and Tesseract packages
   ansible.builtin.package:
     name:
       - libreoffice-writer
       - libreoffice-calc
       - libreoffice-impress
       - tesseract-ocr
-
-- name: Set pip configuration
-  ansible.builtin.command: pip3 config set global.break-system-packages True
-  changed_when: false
+    state: present
 
 - name: Install additional pip packages
   ansible.builtin.pip:
@@ -87,30 +85,31 @@
       - unoconv
       - pngquant
       - WeasyPrint
+    extra_args: --break-package-system
 
-- name: Clone Stirling PDF
+- name: Clone Stirling PDF repository
   ansible.builtin.git:
     repo: https://github.com/Stirling-Tools/Stirling-PDF.git
     dest: "{{ stirlingpdf_build_path }}"
-    update: true
     clone: true
+    depth: 1
     force: true
+    version: latest-release
+  notify: Restart Stirling
 
-- name: Set chmod gradlew
+- name: Set execute permission for gradlew
   ansible.builtin.file:
     path: "{{ stirlingpdf_build_path }}/gradlew"
     mode: "0755"
-    owner: root
-    group: root
 
 - name: Build Stirling PDF
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: ./gradlew build
   args:
     chdir: "{{ stirlingpdf_build_path }}"
   changed_when: false
 
-- name: Stirling PDF jar name
+- name: Get Stirling PDF jar name
   ansible.builtin.shell: ls {{ stirlingpdf_build_path }}/build/libs/Stirling-PDF-*.jar
   register: stirling_pdf_jar
   changed_when: false
@@ -123,7 +122,7 @@
     group: root
     mode: "0755"
 
-- name: Copy Stirling PDF jar
+- name: Copy Stirling PDF jar to target directory
   ansible.builtin.copy:
     src: "{{ stirling_pdf_jar.stdout }}"
     dest: "{{ stirlingpdf_path }}/Stirling-PDF.jar"
@@ -133,7 +132,7 @@
     mode: "0755"
   notify: Restart Stirling
 
-- name: Copy Stirling PDF scripts
+- name: Copy Stirling PDF scripts to target directory
   ansible.builtin.copy:
     src: "{{ stirlingpdf_build_path }}/scripts"
     dest: "{{ stirlingpdf_path }}"
@@ -162,7 +161,7 @@
   notify: Restart Stirling
 
 - name: Ensure Stirling PDF service is started and enabled
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: stirlingpdf
     state: started
     enabled: true
