@@ -85,7 +85,7 @@
       - unoconv
       - pngquant
       - WeasyPrint
-    extra_args: --break-package-system
+    extra_args: --break-system-packages
     state: present
 
 - name: Clone Stirling PDF repository
