@@ -86,6 +86,7 @@
       - pngquant
       - WeasyPrint
     extra_args: --break-package-system
+    state: present
 
 - name: Clone Stirling PDF repository
   ansible.builtin.git:
