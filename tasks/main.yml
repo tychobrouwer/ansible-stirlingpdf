@@ -131,6 +131,7 @@
     owner: root
     group: root
     mode: "0755"
+  notify: Restart Stirling
 
 - name: Copy Stirling PDF scripts
   ansible.builtin.copy:
@@ -140,6 +141,7 @@
     owner: root
     group: root
     mode: "0755"
+  notify: Restart Stirling
 
 - name: Create Stirling PDF .env file
   ansible.builtin.template:
@@ -148,6 +150,7 @@
     mode: "0644"
     owner: root
     group: root
+  notify: Restart Stirling
 
 - name: Ensure Stirling PDF service file is on remote
   ansible.builtin.template:
