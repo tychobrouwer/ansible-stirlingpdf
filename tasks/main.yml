@@ -52,7 +52,6 @@
     clone: true
     depth: 1
     force: true
-    version: latest-release
   notify: Restart Stirling
 
 - name: Autogen and configure jbig2enc
